@@ -8,10 +8,13 @@ const tasks = [];
 let id = 1;
 //get all tasks or get task by query
 app.get("/tasks", function (req, res) {
-  const { description } = req.query;
+  const { description,done } = req.query;
   let task = tasks;
   if (description) {
     task = tasks.find(task => task.description === description)
+  }
+  if (done) {
+    task = tasks.find(task => task.done === !!done)
   }
     if (!task) {
       res.status(404).json({ error: "task not found" });
