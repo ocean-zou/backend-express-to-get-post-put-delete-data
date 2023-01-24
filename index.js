@@ -11,11 +11,11 @@ app.get("/tasks", function (req, res,next) {
   const { description,done } = req.query;
   let task = tasks;
   if (description) {
-    task = tasks.find(task => task.description === description);
+    task = tasks.filter(task => task.description === description);
     res.json(task)
   }
   if (done) {
-    task = tasks.find(task => task.done === !!done);
+    task = tasks.filter(task => task.done === !!done);
     res.json(task)
   }
     if (!task) {
