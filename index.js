@@ -6,16 +6,16 @@ app.use(cors);
 //code start
 const tasks = [];
 let id = 1;
-//get all tasks or get task by query
+//get task by query
 app.get("/tasks", function (req, res,next) {
   const { description,done } = req.query;
   let task = tasks;
   if (description) {
-    task = tasks.filter(task => task.description === description);
+    task = tasks.filter(task => task.description.includes(description));
     res.json(task)
   }
   if (done) {
-    task = tasks.filter(task => task.done === !!done);
+    task = tasks.filter(task => task.done.includes(!!done)) ;
     res.json(task)
   }
     if (!task) {
@@ -25,6 +25,7 @@ app.get("/tasks", function (req, res,next) {
   next()
   
 })
+//get all tasks
 app.get("/tasks", function (req, res, next) {
   res.json(tasks)
 })
@@ -66,7 +67,7 @@ app.post("/tasks", function (req, res) {
 //delete  /tasks/:id  delete task by id
 app.delete("/tasks/:id", (req, res) => {
   const { id } = req.params;
-  const index = tasks.findIndex(task => task.id === +id);
+  const index = tasks.findIndex(task => task.id === Number(id));
   if (index === -1) {
     res.status(404).json({error:"task not found"})
     return
