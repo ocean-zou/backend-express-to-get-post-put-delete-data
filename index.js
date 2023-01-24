@@ -6,24 +6,25 @@ app.use(cors);
 //code start
 const tasks = [];
 let id = 1;
-//get all tasks
+//get all tasks or get task by query
 app.get("/tasks", function (req, res) {
-  res.json(tasks)
+  const { description } = req.query;
+  let task = tasks;
+  if (description) {
+    task = tasks.find(task => task.description === description)
+  }
+    if (!task) {
+      res.status(404).json({ error: "task not found" });
+      return
+    }
+  
+    res.json(task)
+  
 })
 //get task by id
 app.get("/tasks/:id", function (req, res) {
   const { id } = req.params;
   const task = tasks.find(task => task.id === Number(id))
-  if (!task) {
-    res.status(404).json({ error: "task not found" });
-    return
-  }
-    res.json(task)
-  } )
-//get task by query
-app.get("/tasks", function (req, res) {
-  const {description} = req.query;
-  const task = tasks.find(task => task.description === description)
   if (!task) {
     res.status(404).json({ error: "task not found" });
     return
