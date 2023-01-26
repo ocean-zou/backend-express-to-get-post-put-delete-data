@@ -1,4 +1,5 @@
 const express = require("express");
+
 const app = express();
 app.use(express.json());
 app.use(cors);
@@ -6,29 +7,27 @@ app.use(cors);
 //code start
 const tasks = [];
 let id = 1;
-//get task by query
-app.get("/tasks", function (req, res,next) {
+//get all tasks or with query
+app.get("/tasks", function (req, res) {
   const { description,done } = req.query;
-  let task = tasks;
+  let filteredTasks = tasks;
   if (description) {
-    task = tasks.filter(task => task.description.includes(description));
-    res.json(task)
+    filteredTasks = filteredTasks.filter(task => task.description.includes(description));
   }
   if (done) {
-    task = tasks.filter(task => task.done.includes(!!done)) ;
-    res.json(task)
+    filteredTasks = tasks.filter(task => {
+      if (done === "true") {
+        return task.done
+      }
+      if (done === "false") {
+        return !task.done
+      }
+      return false
+    })
   }
-    if (!task) {
-      res.status(404).json({ error: "task not found" });
-      return
-  }
-  next()
-  
+ res.json(tasks)
 })
-//get all tasks
-app.get("/tasks", function (req, res, next) {
-  res.json(tasks)
-})
+
 //get task by id
 app.get("/tasks/:id", function (req, res) {
   const { id } = req.params;
@@ -38,7 +37,8 @@ app.get("/tasks/:id", function (req, res) {
     return
   }
     res.json(task)
-  } )
+})
+  
 //update task by id  put /tasks/:id
 app.put("/tasks/:id", function (req, res) {
   const { id } = req.params;
@@ -51,8 +51,8 @@ app.put("/tasks/:id", function (req, res) {
   if (description) {
     task.description = description;
   }
-  if (done) {
-    task.done = !!done;
+  if (done!=null) {
+    task.done = !!done
   }
     res.json(task)
 })
